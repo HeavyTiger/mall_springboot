@@ -1,0 +1,98 @@
+spring:
+  # 数据源配置
+  datasource:
+    url: jdbc:mysql://192.168.205.200:3306/mall?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true&useAffectedRows=true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: mall
+    password: 123456
+    # Druid连接池配置
+    type: com.alibaba.druid.pool.DruidDataSource
+    initialSize: 5
+    minIdle: 5
+    maxActive: 50
+    maxWait: 60000
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+
+    #  redis集群相关配置
+    #  # Redis相关配置
+    #  redis:
+    #    database: 0
+    #    password: 6o5FLS9bSJmdTGlyqJWxiEGf56vE1orO
+    #    timeout: 1000ms
+    #    cluster:
+    #      # 失败重连次数
+    #      max-redirects: 1
+    #      # 集群配置，三组一主一从，--cluster-replicas 1模式
+    #      nodes:
+    #        - 192.168.205.200:6379
+    #        - 192.168.205.200:6380
+    #        - 192.168.205.200:6381
+    #        - 192.168.205.200:6389
+    #        - 192.168.205.200:6390
+    #        - 192.168.205.200:6391
+
+    #  单机redis配置
+  redis:
+    host: 192.168.205.200
+    port: 6379
+    database: 0
+    password: 6o5FLS9bSJmdTGlyqJWxiEGf56vE1orO
+    # Redis连接池设置
+    lettuce:
+      pool:
+        enabled: true
+        # 连接池最大连接数（使用负值表示没有限制）
+        max-active: 1000
+        # 连接池中的最大空闲连接
+        max-idle: 10
+        # 连接池中的最小空闲连接
+        min-idle: 5
+        # 连接池最大阻塞等待时间（使用负值表示没有限制）
+        max-wait: -1
+  # RabbitMQ配置，消息队列
+  rabbitmq:
+    host: 192.168.205.200
+    username: heavytiger
+    password: 37628981mm
+    virtual-host: /
+    port: 5672
+    listener:
+      simple:
+        # 消费者最小数量
+        concurrency: 10
+        # 消费者最大数量
+        max-concurrency: 10
+        # 限制一次处理一条消息，不要预取，默认250条
+        prefetch: 1
+        # 启动时是否默认启动容器
+        auto-startup: true
+        # 被拒绝时选择重新入队
+        default-requeue-rejected: true
+    template:
+      # 如果被拒绝了，进行重试
+      retry:
+        # 开启重试
+        enabled: true
+        # 重试时间
+        initial-interval: 1000ms
+        # 默认重试次数
+        max-attempts: 3
+        # 重试最大间隔时间
+        max-interval: 10000ms
+        # 重试的间隔乘数，例如2.0，第一次等10s，第二次20s，第三次40s
+        multiplier: 1
+
+# MyBatis配置
+mybatis:
+  type-aliases-package: com.heavytiger.mall.pojo
+  mapper-locations: classpath:mapper/*.xml
+# 日志配置
+logging:
+  config: classpath:config/log4j2.xml
+
+# 端口号配置
+server:
+  port: 8080
+  servlet:
+    context-path: /mall

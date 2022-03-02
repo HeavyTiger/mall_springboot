@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.heavytiger.mall.mapper.SeckillOrderMapper">
+
+    <insert id="addSeckillOrder" useGeneratedKeys="true" keyProperty="id" keyColumn="id"
+            parameterType="SeckillOrder">
+        INSERT INTO mall.seckill_order (id, customer_id, order_id, product_id)
+        VALUES (#{id}, #{customerId}, #{orderId}, #{productId})
+    </insert>
+
+    <delete id="deleteSeckillOrder" parameterType="int">
+        DELETE
+        FROM mall.seckill_order
+        WHERE id = #{id}
+    </delete>
+
+    <update id="updateSeckillOrder" parameterType="SeckillOrder">
+        UPDATE mall.seckill_order
+        <set>
+            <if test="customerId != null">customer_id=#{customerId},</if>
+            <if test="OrderId != null">order_id=#{orderId},</if>
+            <if test="ProductId != null">product_id=#{productId}</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <resultMap id="SeckillOrderMap" type="SeckillOrder">
+        <id column="id" property="id"/>
+        <result column="customer_id" property="customerId"/>
+        <result column="order_id" property="orderId"/>
+        <result column="product_id" property="productId"/>
+    </resultMap>
+
+    <select id="querySeckillOrderById" parameterType="int" resultMap="SeckillOrderMap">
+        SELECT *
+        FROM mall.seckill_order
+        WHERE id = #{id}
+    </select>
+
+    <select id="querySeckillOrders" resultMap="SeckillOrderMap">
+        SELECT *
+        FROM mall.seckill_order
+    </select>
+
+    <select id="querySeckillOrdersByCustomerId" parameterType="int" resultMap="SeckillOrderMap">
+        SELECT *
+        FROM mall.seckill_order
+        WHERE customer_id = #{customerId}
+    </select>
+</mapper>

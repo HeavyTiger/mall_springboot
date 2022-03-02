@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.heavytiger.mall.mapper.ProductMapper">
+
+    <insert id="addProduct" useGeneratedKeys="true" keyProperty="pid" keyColumn="product_id"
+            parameterType="ProductDetail">
+        INSERT INTO mall.products(product_id, product_name, product_price, product_stock, product_tag_id,
+                                  product_description, product_status, supplier_id)
+        VALUES (#{pid}, #{pName}, #{price}, #{stock}, #{tid}, #{pDescription}, #{pStatus}, #{sid})
+    </insert>
+
+    <delete id="deleteProduct" parameterType="int">
+        DELETE
+        FROM mall.products
+        WHERE product_id = #{pid}
+    </delete>
+
+    <update id="updateProduct" parameterType="Product">
+        UPDATE mall.products
+        <set>
+            <if test="pName != null">product_name=#{pName},</if>
+            <if test="price != null">product_price=#{price},</if>
+            <if test="stock != null">product_stock=#{stock},</if>
+            <if test="tid != null">product_tag_id=#{tid},</if>
+            <if test="pDescription != null">product_description=#{pDescription},</if>
+            <if test="pStatus != null">product_status=#{pStatus},</if>
+            <if test="sid != null">supplier_id=#{sid}</if>
+        </set>
+        WHERE product_id = #{pid}
+    </update>
+
+    <update id="updateProductStock">
+        UPDATE mall.products
+        SET product_stock = #{updateStock}
+        WHERE product_id = #{pid}
+        AND product_stock = #{curStock}
+    </update>
+
+    <resultMap id="ProductDetailMap" type="ProductDetail">
+        <result column="product_id" property="pid"/>
+        <result column="product_name" property="pName"/>
+        <result column="product_price" property="price"/>
+        <result column="product_stock" property="stock"/>
+        <result column="product_tag_id" property="tid"/>
+        <result column="tag_name" property="tName"/>
+        <result column="product_description" property="pDescription"/>
+        <result column="product_status" property="pStatus"/>
+        <result column="supplier_id" property="sid"/>
+        <result column="supplier_username" property="sName"/>
+        <result column="supplier_phone" property="sPhone"/>
+        <result column="supplier_email" property="sEmail"/>
+        <result column="supplier_description" property="sDescription"/>
+    </resultMap>
+
+    <resultMap id="ProductMap" type="Product">
+        <result column="product_id" property="pid"/>
+        <result column="product_name" property="pName"/>
+        <result column="product_price" property="price"/>
+        <result column="product_stock" property="stock"/>
+        <result column="product_tag_id" property="tid"/>
+        <result column="product_description" property="pDescription"/>
+        <result column="product_status" property="pStatus"/>
+        <result column="supplier_id" property="sid"/>
+    </resultMap>
+
+    <select id="queryProductDetailById" parameterType="int" resultMap="ProductDetailMap">
+        SELECT *
+        FROM mall.product_detail
+        WHERE product_id = #{pid}
+    </select>
+
+    <select id="queryProductById" parameterType="int" resultMap="ProductMap">
+        SELECT *
+        FROM mall.products
+        WHERE product_id = #{pid}
+    </select>
+
+    <select id="queryProductDetails" resultMap="ProductDetailMap">
+        SELECT *
+        FROM mall.product_detail
+    </select>
+
+    <select id="queryProductDetailForUpdate" parameterType="int" resultMap="ProductMap">
+        SELECT *
+        FROM mall.products
+        WHERE product_id = #{pid}
+        FOR UPDATE
+    </select>
+
+    <select id="queryProductDetailBySearch" parameterType="ProductSearch" resultMap="ProductDetailMap">
+        SELECT *
+        FROM mall.product_detail
+        <where>
+            <if test="productDescription != null">
+                AND (`product_name` LIKE "%"#{productDescription}"%" OR `product_description` LIKE "%"#{productDescription}"%")
+            </if>
+            <if test="supplierDescription != null">
+                AND (`supplier_username` LIKE "%"#{supplierDescription}"%" OR `supplier_description` LIKE "%"#{supplierDescription}"%")
+            </if>
+            <if test="tagDescription != null">
+                AND `tag_name` LIKE "%"#{tagDescription}"%"
+            </if>
+            <if test="minPrice != null">
+                AND `product_price` &gt;= #{minPrice}
+            </if>
+            <if test="maxPrice != null">
+                AND `product_price` &lt;= #{maxPrice}
+            </if>
+        </where>
+    </select>
+
+</mapper>

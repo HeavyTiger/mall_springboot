@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.heavytiger.mall.mapper.SeckillProductMapper">
+
+    <insert id="addSeckillProduct" useGeneratedKeys="true" keyProperty="id" keyColumn="id"
+            parameterType="SeckillProduct">
+        INSERT INTO mall.seckill_products(id, product_id, seckill_price, stock, start_date, end_date)
+        VALUES (#{id}, #{productId}, #{seckillPrice}, #{stock}, #{startDate}, #{endDate})
+    </insert>
+
+    <delete id="deleteSeckillProduct" parameterType="int">
+        DELETE
+        FROM mall.seckill_products
+        WHERE id = #{id}
+    </delete>
+
+    <update id="updateSeckillProduct" parameterType="SeckillProduct">
+        UPDATE mall.seckill_products
+        <set>
+            <if test="productId != null">product_id=#{productId},</if>
+            <if test="seckillPrice != null">seckill_price=#{seckillPrice},</if>
+            <if test="stock != null">stock=#{stock},</if>
+            <if test="startDate != null">start_date=#{startDate},</if>
+            <if test="endDate != null">end_date=#{endDate}</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <resultMap id="SeckillProductMap" type="SeckillProduct">
+        <id column="id" property="id"/>
+        <result column="product_id" property="productId"/>
+        <result column="seckill_price" property="seckillPrice"/>
+        <result column="stock" property="stock"/>
+        <result column="start_date" property="startDate"/>
+        <result column="end_date" property="endDate"/>
+    </resultMap>
+
+    <select id="querySeckillProductById" parameterType="int" resultMap="SeckillProductMap">
+        SELECT *
+        FROM mall.seckill_products
+        WHERE id = #{id}
+    </select>
+
+    <select id="querySeckillProducts" resultMap="SeckillProductMap">
+        SELECT *
+        FROM mall.seckill_products
+    </select>
+
+    <select id="querySeckillProductByProductId" resultMap="SeckillProductMap">
+        SELECT *
+        FROM mall.seckill_products
+        WHERE product_id = #{productId}
+    </select>
+
+</mapper>
